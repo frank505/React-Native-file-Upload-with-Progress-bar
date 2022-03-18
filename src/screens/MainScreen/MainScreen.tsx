@@ -12,6 +12,7 @@ import { displayAlertMessage } from '../../helperfunctions/alertHelpers';
 import { style } from './styles';
 import ImageDescription from './ImageDescription';
 import Button from '../../components/Button';
+import { AxiosResponse } from 'axios';
 
 
 
@@ -23,14 +24,26 @@ import Button from '../../components/Button';
 const MainScreen:React.FC<{}> = () => 
 {
 
-  const fileUpload = async(blobFile:BlobFile|undefined|null) =>
+
+  const [fileProperty, setFileProperty] = useState<fileProperty>({
+    fileName:'',
+    filePath:'',
+    fileSize:''
+  });
+
+  const [blobFile,setBlobFile] = useState<BlobFile|null>(null);
+  const [fileUploadProgress,setFileUploadProgress] = useState<number>(0);
+
+
+  const fileUpload = async(blobFile:BlobFile|undefined|null):Promise<any> =>
 {
+ 
   let formData = new FormData();
   formData.append('file', blobFile);
 
   
 
-   postRequest({
+  return await postRequest({
     method: 'POST',
     formData: formData,
     onUploadProgress: updateProgressBar,
@@ -71,29 +84,7 @@ const updateProgressBar = (progressEvent:any):void =>
     displayAlertMessage({header:'Failed',message:'file upload was not successful, please try again later',callBackFunc:clearProgress});
   }
 
-
- 
-
-
   const {mutate,isLoading,isSuccess,isError} = useMutation(fileUpload,{retry: 3});
-
-
-  const [fileProperty, setFileProperty] = useState<fileProperty>({
-    fileName:'',
-    filePath:'',
-    fileSize:''
-  });
-
-  const [blobFile,setBlobFile] = useState<BlobFile|undefined|null>(null);
-  const [fileUploadProgress,setFileUploadProgress] = useState<number>(0);
-
- 
-  
-  
-
-
-
-
 
 
   const selectFile = async():Promise<void> =>
@@ -111,12 +102,16 @@ const updateProgressBar = (progressEvent:any):void =>
  
 
  
- const uploadFile = async():Promise<void> =>
+ const uploadFile = async(blobFile:BlobFile|null):Promise<void> =>
  {
+  blobFile == null ?
+   displayAlertMessage({header:'',message:''})
+    :
     mutate(blobFile,{
     onSuccess: async(data:any)=> await successfullyUploadedFile(data), 
     onError:async(err:any)=>  await failedToUploadFile(err)
   });
+ 
  } 
 
 
@@ -146,15 +141,11 @@ const updateProgressBar = (progressEvent:any):void =>
 
            <Button textString={
              isLoading
-           ?
-           'uploading file please wait...':
-           blobFile==null?
-           'Select File to Enable Button'
-           : 
+           ?'uploading file please wait...':
            ' Upload Selected File'} 
            testID={'uploadBtn'} 
-           disabled={isLoading && blobFile==null ?true:false}
-           onPress={async():Promise<void>=>await uploadFile()}
+            disabled={isLoading ?true :false}
+           onPress={async()=>await uploadFile(blobFile)}
            />
          </View>
 

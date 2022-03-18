@@ -13,7 +13,7 @@ const Button:React.FC<ButtonType> = (
     {
         onPress,testID,
         backgroundColor,width,height,
-        textString
+        textString,disabled
       }
     ) => 
 {
@@ -29,6 +29,7 @@ const Button:React.FC<ButtonType> = (
             }]}
             onPress={onPress}
             testID={testID}
+            disabled={disabled}
             >
            <Text style={style.selectFileText}>{textString}</Text>
        </TouchableOpacity>   
