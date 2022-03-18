@@ -36,11 +36,8 @@ const MainScreen:React.FC<{}> = () =>
     onUploadProgress: updateProgressBar,
     addedUrl: 'v0/add',
     contentType: 'multipart/form-data'
-  }).then((data)=>{
-     successfullyUploadedFile(data);
-  }).catch((error)=>{
-      failedToUploadFile(error)
   });
+ 
 
 }
 
@@ -71,7 +68,6 @@ const updateProgressBar = (progressEvent:any):void =>
   {
     let completeProgress = 0;
     setFileUploadProgress(completeProgress);
-  
     displayAlertMessage({header:'Failed',message:'file upload was not successful, please try again later',callBackFunc:clearProgress});
   }
 
@@ -79,10 +75,7 @@ const updateProgressBar = (progressEvent:any):void =>
  
 
 
-  const {mutate,isLoading,isSuccess,isError} = useMutation(fileUpload,{retry: 3, 
-      onSuccess: async(data:any)=> await successfullyUploadedFile(data), 
-      onError:async(err:any)=>  await failedToUploadFile(err)
-     });
+  const {mutate,isLoading,isSuccess,isError} = useMutation(fileUpload,{retry: 3});
 
 
   const [fileProperty, setFileProperty] = useState<fileProperty>({
@@ -120,7 +113,10 @@ const updateProgressBar = (progressEvent:any):void =>
  
  const uploadFile = async():Promise<void> =>
  {
-  mutate(blobFile);
+    mutate(blobFile,{
+    onSuccess: async(data:any)=> await successfullyUploadedFile(data), 
+    onError:async(err:any)=>  await failedToUploadFile(err)
+  });
  } 
 
 
@@ -148,9 +144,16 @@ const updateProgressBar = (progressEvent:any):void =>
 
          <View style={{marginTop:20}}>
 
-           <Button textString={isLoading?'uploading file please wait...': ' Upload Selected File'} 
+           <Button textString={
+             isLoading
+           ?
+           'uploading file please wait...':
+           blobFile==null?
+           'Select File to Enable Button'
+           : 
+           ' Upload Selected File'} 
            testID={'uploadBtn'} 
-           disabled={isLoading?true:false}
+           disabled={isLoading && blobFile==null ?true:false}
            onPress={async():Promise<void>=>await uploadFile()}
            />
          </View>

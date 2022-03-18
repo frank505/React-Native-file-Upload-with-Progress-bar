@@ -76,6 +76,8 @@ describe('MainScreen test', () =>
        renderComponent();
    });
   
+
+   
    it('select a file', async()=> {
        const {getByTestId} = renderComponent();
        /** select an image or video */
