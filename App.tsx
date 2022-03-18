@@ -10,6 +10,7 @@
 
 import React, { useEffect } from 'react';
 import {
+  Alert,
   Platform,
   SafeAreaView,
   ScrollView,
@@ -22,7 +23,7 @@ import {
 import { QueryClient, QueryClientProvider } from 'react-query';
 import MainScreen from './src/screens/MainScreen';
 import NetInfo, {  useNetInfo }  from "@react-native-community/netinfo";
-import { displayAlertMessage } from './src/helperfunctions/alertHelpers';
+
 
 
 const App:React.FC = () =>
@@ -32,8 +33,8 @@ const networkCheck = useNetInfo();
 
   useEffect(()=>
   {
-    networkCheck.isConnected==false ? displayAlertMessage({header:'Network Error',
-    message:'No Network Connection was Found, Please Note that this app will function properly'}):null;
+    networkCheck.isConnected==false ? 
+    Alert.alert('Failed','file upload was not successful, please try again later'):null;
   
   },
   [networkCheck])

@@ -6,13 +6,11 @@ import MainScreen from "./MainScreen";
 import TestWrapperComponent from '../../../jest/TestWrapper';
 import axios from 'axios';
 import MockAdapter from 'axios-mock-adapter';
+import { API_BASE_URL } from '../../constants';
+
 
 
 const mock = new MockAdapter(axios);
-
-jest.useFakeTimers()
-
-
 
 
 const imageSpec:any = {
@@ -54,6 +52,10 @@ jest.mock('react-native-image-crop-picker', () => {
 
   
 
+  jest.mock('',()=>{
+
+  })
+
 
 
 
@@ -76,9 +78,6 @@ describe('MainScreen test', () =>
 
  });
 
- beforeAll(()=>{
-  jest.runAllTimers();
- })
 
    it('renders component correctly', ()=>{
        renderComponent();
@@ -87,17 +86,17 @@ describe('MainScreen test', () =>
 
    it('no file selected', async()=>
    {
-     jest.spyOn(Alert,'alert');
+    jest.spyOn(Alert,'alert');
     const {getByTestId} = renderComponent();
-    
-    await waitFor(()=>fireEvent.press(getByTestId('uploadBtn')));
-    waitFor(()=> expect(Alert.alert).not.toHaveBeenCalled()); 
+   fireEvent.press(getByTestId('uploadBtn')) ; 
+   expect(Alert.alert).toHaveBeenCalled() ;   
    })
    
    it('select a file', async()=> {
+    jest.spyOn(Alert,'alert');
        const {getByTestId} = renderComponent();
        /** select an image or video */
-       await waitFor(()=>fireEvent.press(getByTestId('selectFile')))
+     await waitFor(()=> fireEvent.press(getByTestId('selectFile'))) ; 
     expect(ImageCropPicker.openPicker).toHaveBeenCalled();
    });
 
@@ -105,6 +104,7 @@ describe('MainScreen test', () =>
   
    it('checks for file upload progress',async()=>
    {
+    jest.spyOn(Alert,'alert');
     const {getByTestId} = renderComponent();
        // this mocks a request which is always at 40% progress
      mock.onPost().reply((config) => {
@@ -124,30 +124,30 @@ describe('MainScreen test', () =>
 
    it('uploads files successfully', async() =>
    {
-     jest.runAllTimers();
-    jest.spyOn(Alert, 'alert');
+    jest.spyOn(Alert,'alert');
     const {getByTestId} = renderComponent();  
      axios.post = jest.fn().mockResolvedValueOnce(Promise.resolve({}));
      fireEvent.press(getByTestId('selectFile'));
    await waitFor(()=>fireEvent.press(getByTestId('selectFile')))
     expect(ImageCropPicker.openPicker).toHaveBeenCalled() ; 
-    fireEvent.press(getByTestId('uploadBtn'));  
-  await waitFor(()=> expect(axios.post).toHaveBeenCalled()); 
-   
+   await waitFor(()=> fireEvent.press(getByTestId('uploadBtn'))) ;  
+   expect(axios.post).toHaveBeenCalled(); 
+   expect(Alert.alert).toHaveBeenCalled();
+   resetAllData(Alert);
+    
    });
 
    it('fails to upload file', async()=>
    {
-    jest.spyOn(Alert, 'alert');
+    jest.spyOn(Alert,'alert');
     const {getByTestId} = renderComponent();
     axios.post = jest.fn().mockRejectedValueOnce(new Error('error uploading file'));
-   await waitFor(()=> fireEvent.press(getByTestId('selectFile'))) ;
- expect(ImageCropPicker.openPicker).toHaveBeenCalled() ;    
-    fireEvent.press(getByTestId('uploadBtn'));
-   await waitFor(()=> expect(axios.post).toHaveBeenCalled()); 
-  expect(Alert.alert).toHaveBeenCalled();
-   /** click the ok button to reset all things */
-   resetAllData(Alert);
+    await waitFor(()=> fireEvent.press(getByTestId('selectFile'))) ;
+    expect(ImageCropPicker.openPicker).toHaveBeenCalled() ;    
+   await waitFor(()=> fireEvent.press(getByTestId('uploadBtn'))) ;
+    expect(axios.post).toHaveBeenCalled(); 
+    expect(Alert.alert).toHaveBeenCalled();
+    resetAllData(Alert);
 
    })
 

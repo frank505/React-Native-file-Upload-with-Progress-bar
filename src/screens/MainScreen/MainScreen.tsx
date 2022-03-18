@@ -8,11 +8,10 @@ import { getBlobFile } from '../../helperfunctions/fileHelpers';
 import { BlobFile } from '../../helperfunctions/types';
 import {useMutation} from 'react-query'
 import { postRequest } from '../../http/axiosSetup';
-import { displayAlertMessage } from '../../helperfunctions/alertHelpers';
 import { style } from './styles';
 import ImageDescription from './ImageDescription';
 import Button from '../../components/Button';
-import { AxiosResponse } from 'axios';
+
 
 
 
@@ -41,15 +40,18 @@ const MainScreen:React.FC<{}> = () =>
   let formData = new FormData();
   formData.append('file', blobFile);
 
-  
-
-  return await postRequest({
+  return  postRequest({
     method: 'POST',
     formData: formData,
     onUploadProgress: updateProgressBar,
     addedUrl: 'v0/add',
     contentType: 'multipart/form-data'
-  });
+  }).then((data)=>{
+   return successfullyUploadedFile(data);
+  }).catch((err)=>
+  {
+   return failedToUploadFile(err)
+  })
  
 
 }
@@ -73,19 +75,35 @@ const updateProgressBar = (progressEvent:any):void =>
   const successfullyUploadedFile = async(data:any):Promise<void> =>
   {
       setFileUploadProgress(1);
-      displayAlertMessage({header:'Success',message:'Successfully uploaded file',callBackFunc:clearProgress});
+      Alert.alert('Success','Successfully uploaded file', 
+      [
+              {       
+                text: 'Ok',
+                onPress: clearProgress,
+                style: 'cancel',
+              },
+            ]
+      );
   }
 
 
-  const failedToUploadFile = async(err:any):Promise<void> =>
+  const failedToUploadFile = (err:any) =>
   {
-    let completeProgress = 0;
-    setFileUploadProgress(completeProgress);
-    displayAlertMessage({header:'Failed',message:'file upload was not successful, please try again later',callBackFunc:clearProgress});
+    setFileUploadProgress(0);
+    Alert.alert('Failed','file upload was not successful, please try again later', 
+    [
+            {       
+              text: 'Ok',
+              onPress: clearProgress,
+              style: 'cancel',
+            },
+          ]
+    );
   }
 
-  const {mutate,isLoading,isSuccess,isError} = useMutation(fileUpload,{retry: 3});
+  const {mutate,isLoading,isSuccess,isError,status} = useMutation(fileUpload,{retry: 3});
 
+ 
 
   const selectFile = async():Promise<void> =>
   {
@@ -104,13 +122,10 @@ const updateProgressBar = (progressEvent:any):void =>
  
  const uploadFile = async(blobFile:BlobFile|null):Promise<void> =>
  {
-  blobFile == null ?
-   displayAlertMessage({header:'',message:''})
+ return blobFile == null ?
+       Alert.alert('Error','Please select a file')
     :
-    mutate(blobFile,{
-    onSuccess: async(data:any)=> await successfullyUploadedFile(data), 
-    onError:async(err:any)=>  await failedToUploadFile(err)
-  });
+    mutate(blobFile);
  
  } 
 
