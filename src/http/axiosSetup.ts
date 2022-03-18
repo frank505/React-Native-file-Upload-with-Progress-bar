@@ -15,16 +15,7 @@ export const postRequest  = async(data:PostRequestType):Promise<AxiosResponse> =
          onUploadProgress:(progressEvent:any) => data.onUploadProgress(progressEvent)
         })
     
-    // return await axios({
-    //     method:'POST',
-    //     url:API_BASE_URL+data.addedUrl,
-    //     data:data.formData,
-    //     headers: { "Content-Type": data.contentType },
-    //     onUploadProgress: (progressEvent:any): void => 
-    //     {  
-    //         data.onUploadProgress(progressEvent);  
-    //    }
-    //  });
+   
 }
 
 
