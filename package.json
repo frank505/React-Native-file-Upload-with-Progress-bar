@@ -10,9 +10,18 @@
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx"
   },
   "dependencies": {
+    "@react-native-community/netinfo": "^8.1.0",
+    "@testing-library/jest-native": "^4.0.4",
+    "@testing-library/react-hooks": "^7.0.2",
     "@testing-library/react-native": "^9.0.0",
+    "axios": "0.24",
+    "axios-mock-adapter": "^1.20.0",
     "react": "17.0.2",
-    "react-native": "0.67.3"
+    "react-native": "0.67.3",
+    "react-native-image-crop-picker": "0.35.3",
+    "react-native-progress": "^5.0.0",
+    "react-native-svg": "^12.3.0",
+    "react-query": "^3.34.16"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9",
@@ -45,11 +54,10 @@
       "@testing-library/jest-native/extend-expect"
     ],
     "setupFiles": [
-      "./node_modules/react-native-gesture-handler/jestSetup.js",
-      "./jest/setup.js"
+      "./jest/setup.ts"
     ],
     "transformIgnorePatterns": [
-      "node_modules/(?!(jest-)?@?react-native|@react-native-community)"
+      "node_modules/(?!(jest-)?@?react-native|@react-native-community|@react-navigation|@twotalltotems)"
     ],
     "moduleFileExtensions": [
       "ts",
@@ -64,5 +72,4 @@
       "\\.(css|less)$": "<rootDir>/fileMock.js"
     }
   }
-
 }
