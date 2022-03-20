@@ -34,7 +34,7 @@ const networkCheck = useNetInfo();
   useEffect(()=>
   {
     networkCheck.isConnected==false ? 
-    Alert.alert('Failed','file upload was not successful, please try again later'):null;
+    Alert.alert('Network Error','you seem not to be connected to interneted and so this app will function optimally'):null;
   
   },
   [networkCheck])

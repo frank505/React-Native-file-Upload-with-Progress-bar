@@ -6,7 +6,7 @@ import App from './App';
 import { Alert } from 'react-native';
 
 
-jest.useFakeTimers();
+
 
 
 const renderComponent = ():RenderAPI =>
@@ -32,7 +32,6 @@ describe('App test',()=>{
      it('displays alert if no network', async()=>
      {
          jest.spyOn(Alert,'alert');
-         jest.runAllTimers();
         const network = useNetInfo();
         network.isConnected = false;
          renderComponent();

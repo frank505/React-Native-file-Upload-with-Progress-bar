@@ -11,6 +11,7 @@ import { postRequest } from '../../http/axiosSetup';
 import { style } from './styles';
 import ImageDescription from './ImageDescription';
 import Button from '../../components/Button';
+import { AxiosResponse } from 'axios';
 
 
 
@@ -72,7 +73,7 @@ const updateProgressBar = (progressEvent:any):void =>
   }
 
 
-  const successfullyUploadedFile = async(data:any):Promise<void> =>
+  const successfullyUploadedFile = async(data:AxiosResponse):Promise<void> =>
   {
       setFileUploadProgress(1);
       Alert.alert('Success','Successfully uploaded file', 
@@ -87,7 +88,7 @@ const updateProgressBar = (progressEvent:any):void =>
   }
 
 
-  const failedToUploadFile = (err:any) =>
+  const failedToUploadFile = (err:Error) =>
   {
     setFileUploadProgress(0);
     Alert.alert('Failed','file upload was not successful, please try again later', 
@@ -101,14 +102,13 @@ const updateProgressBar = (progressEvent:any):void =>
     );
   }
 
-  const {mutate,isLoading,isSuccess,isError,status} = useMutation(fileUpload,{retry: 3});
+  const {mutate,isLoading} = useMutation(fileUpload,{retry: 3});
 
  
 
   const selectFile = async():Promise<void> =>
   {
    let selectedFile:Video|Image =  await ImagePicker.openPicker({mediaType:'any'});
-   console.log(selectedFile);
     setFileProperty({...fileProperty,
       fileName:selectedFile.filename,
       filePath:selectedFile.path,

@@ -6,6 +6,7 @@ NativeModules.RNCNetInfo = {
   removeListeners: jest.fn()
 };
 
+jest.mock('react-native/Libraries/Animated/NativeAnimatedHelper');
 
 //a function to tell if a pressable object is disabled or enabled
 export function isDisabled(element:any) {
